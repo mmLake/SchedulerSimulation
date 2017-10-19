@@ -18,7 +18,7 @@ public abstract class Scheduler {
     public void populateCSV(String textFile, Queue<ProcessObj> processQueue){
 
         try {
-            FileWriter writer = new FileWriter(newTextFile);
+            FileWriter writer = new FileWriter(newTextFile, true);
             BufferedWriter bw = new BufferedWriter(writer);
 
             bw.write("#############" + getClass().getSimpleName() + " : " + textFile + "#############");
@@ -26,9 +26,14 @@ public abstract class Scheduler {
 
             calculateCPUTimes();
 
-            int avgTurnaroundTime = 0;
-            int cpuTime = 0;
-            for (ProcessObj proc : processQueue){
+            //initialize
+            int cpuTime = -cpuSwitchTime;
+            int processSize = processQueue.size();
+            int totalCpuTime = processQueue.peek().getBurst_time();
+
+            while (processQueue.size() > 0){
+                ProcessObj proc = processQueue.poll();
+
                 //write start time
                 bw.write("PID: " + proc.getPid());
                 bw.write(" Start Burst Val: " + proc.getStartBurstVal());
@@ -40,16 +45,20 @@ public abstract class Scheduler {
                 String completed = (proc.getProcComplete() ? "COMPLETE" : "INCOMPLETE");
                 bw.write(" " + completed);
 
-                //last cpuTime
-                cpuTime += proc.getBurst_time() + getCpuSwitchTime();
+                //set current cpuTime and total cpuTime
+                cpuTime += cpuSwitchTime + proc.getBurst_time();
+                totalCpuTime += cpuTime;
+
+                System.out.println(cpuTime);
 
                 bw.newLine();
             }
 
-            avgTurnaroundTime = cpuTime/processQueue.size();
-            System.out.println("avg turnaround time: " + avgTurnaroundTime);
-
+            //write average turnaround time
+            int avgTurnaroundTime = totalCpuTime/processSize;
             bw.write("Average Turnaround Time: " + avgTurnaroundTime);
+            bw.newLine();
+
             bw.close();
         } catch (Exception ioe){
             ioe.printStackTrace();
