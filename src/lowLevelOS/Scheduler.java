@@ -13,7 +13,7 @@ public abstract class Scheduler {
     private static final int cpuSwitchTime = 3;
     protected Queue<ProcessObj> processQueue;
 
-    abstract void calculateCPUTimes();
+    abstract void calculateBurstValues();
 
     public void populateCSV(String textFile, Queue<ProcessObj> processQueue){
 
@@ -24,12 +24,12 @@ public abstract class Scheduler {
             bw.write("#############" + getClass().getSimpleName() + " : " + textFile + "#############");
             bw.newLine();
 
-            calculateCPUTimes();
+            int processSize = processQueue.size();
+            calculateBurstValues();
 
             //initialize
             int cpuTime = -cpuSwitchTime;
-            int processSize = processQueue.size();
-            int totalCpuTime = processQueue.peek().getBurst_time();
+            int totalCpuTime = processQueue.peek().getStartBurstVal();
 
             while (processQueue.size() > 0){
                 ProcessObj proc = processQueue.poll();
@@ -46,7 +46,7 @@ public abstract class Scheduler {
                 bw.write(" " + completed);
 
                 //set current cpuTime and total cpuTime
-                cpuTime += cpuSwitchTime + proc.getBurst_time();
+                cpuTime += cpuSwitchTime + (proc.getStartBurstVal() - proc.getStopBurstVal());
                 totalCpuTime += cpuTime;
 
                 System.out.println(cpuTime);

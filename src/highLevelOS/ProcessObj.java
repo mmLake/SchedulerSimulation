@@ -7,9 +7,9 @@ public class ProcessObj {
     private int pid;
     private int burst_time;
     private int priority;
-    private int startBurstVal;
-    private int stopBurstVal;
-    private boolean procComplete;
+    private int startBurstVal = 0;
+    private int stopBurstVal = 0;
+    private boolean procComplete = true;
 
     public ProcessObj(int pid, int burst_time, int priority){
         this.pid = pid;

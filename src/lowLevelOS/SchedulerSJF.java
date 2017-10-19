@@ -13,8 +13,7 @@ import java.util.PriorityQueue;
 public class SchedulerSJF extends Scheduler {
 
     private final static String textOne = "testdataOne.txt";
-    private final static boolean procComplete = true;
-    private final static int stopBurstVal = 0;
+
     private Comparator<ProcessObj> comparator = new BurstTimeComparator();
     private Queue<ProcessObj> processQueue = new PriorityQueue<ProcessObj>(30, comparator);
 
@@ -23,16 +22,12 @@ public class SchedulerSJF extends Scheduler {
         populateCSV(textOne, processQueue);
     }
 
-    public void calculateCPUTimes() {
+    public void calculateBurstValues() {
         int cpuTime = 0;
 
         for (ProcessObj proc : processQueue){
             proc.setStartBurstVal(proc.getBurst_time());
-
-            proc.setStopBurstVal(stopBurstVal);
-            proc.setProcComplete(procComplete);
         }
-
     }
 
     public class BurstTimeComparator implements Comparator<ProcessObj>{

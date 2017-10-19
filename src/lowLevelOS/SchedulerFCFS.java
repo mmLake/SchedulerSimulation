@@ -10,8 +10,6 @@ import java.util.concurrent.ArrayBlockingQueue;
  */
 public class SchedulerFCFS extends Scheduler{
     private final static String textOne = "testdataOne.txt";
-    private final static boolean procComplete = true;
-    private final static int stopBurstVal = 0;
     private Queue<ProcessObj> processQueue = new ArrayBlockingQueue<ProcessObj>(30);
 
     public SchedulerFCFS(){
@@ -19,13 +17,9 @@ public class SchedulerFCFS extends Scheduler{
         populateCSV(textOne, processQueue);
     }
 
-    public void calculateCPUTimes() {
-
+    public void calculateBurstValues() {
         for (ProcessObj proc : processQueue){
             proc.setStartBurstVal(proc.getBurst_time());
-
-            proc.setStopBurstVal(stopBurstVal);
-            proc.setProcComplete(procComplete);
         }
     }
 }
