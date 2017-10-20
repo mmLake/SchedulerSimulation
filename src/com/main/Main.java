@@ -10,6 +10,6 @@ public class Main {
 //        SchedulerFCFS fcfs = new SchedulerFCFS();
 //        SchedulerSJF sjf = new SchedulerSJF();
         SchedulerRoundRobin rr = new SchedulerRoundRobin(60);
-        SchedulerRoundRobin rrTwo = new SchedulerRoundRobin(30);
+//        SchedulerRoundRobin rrTwo = new SchedulerRoundRobin(30);
     }
 }

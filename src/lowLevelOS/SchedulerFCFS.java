@@ -17,9 +17,5 @@ public class SchedulerFCFS extends Scheduler{
         populateCSV(textOne, processQueue);
     }
 
-    public void calculateBurstValues() {
-        for (ProcessObj proc : processQueue){
-            proc.setStartBurstVal(proc.getBurst_time());
-        }
-    }
+    public void calculateBurstValues(ProcessObj proc) {}
 }

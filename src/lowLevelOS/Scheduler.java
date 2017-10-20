@@ -13,10 +13,13 @@ public abstract class Scheduler {
     private static final int cpuSwitchTime = 3;
     protected Queue<ProcessObj> processQueue;
 
-    abstract void calculateBurstValues();
+    abstract void calculateBurstValues(ProcessObj proc);
 
-    public void populateCSV(String textFile, Queue<ProcessObj> processQueue){
+    public void populateCSV(String textFile, Queue<ProcessObj> processQueue) {
+        populateCSV(textFile, processQueue, null);
+    }
 
+    public void populateCSV(String textFile, Queue<ProcessObj> processQueue, ProcessObj process){
         try {
             FileWriter writer = new FileWriter(newTextFile, true);
             BufferedWriter bw = new BufferedWriter(writer);
@@ -24,15 +27,23 @@ public abstract class Scheduler {
             bw.write("#############" + getClass().getSimpleName() + " : " + textFile + "#############");
             bw.newLine();
 
-            int processSize = processQueue.size();
-            calculateBurstValues();
-
             //initialize
             int cpuTime = -cpuSwitchTime;
-            int totalCpuTime = processQueue.peek().getStartBurstVal();
+            int totalCpuTime = 0;
+            int processSize = processQueue.size();
+            for (ProcessObj proc : processQueue){
+                proc.setStartBurstVal(proc.getBurst_time());
+                calculateBurstValues(proc);
+            }
 
             while (processQueue.size() > 0){
-                ProcessObj proc = processQueue.poll();
+                ProcessObj proc;
+                //check if Lottery, else proceed
+                if (getClass().isInstance(SchedulerLottery.class)){
+                    proc = process;
+                } else {
+                    proc = processQueue.poll();
+                }
 
                 //write start time
                 bw.write("PID: " + proc.getPid());
@@ -47,7 +58,13 @@ public abstract class Scheduler {
 
                 //set current cpuTime and total cpuTime
                 cpuTime += cpuSwitchTime + (proc.getStartBurstVal() - proc.getStopBurstVal());
-                totalCpuTime += cpuTime;
+                if (proc.getProcComplete()) {totalCpuTime += cpuTime;}
+
+                //if process is incomplete, add process to back of the queue & recalculate start & stop burst vals
+                if (!proc.getProcComplete()) {
+                    processQueue.add(proc);
+                    calculateBurstValues(proc);
+                }
 
                 System.out.println(cpuTime);
 
@@ -85,10 +102,6 @@ public abstract class Scheduler {
         } catch (Exception ioe){
             ioe.printStackTrace();
         }
-    }
-
-    public static int getCpuSwitchTime() {
-        return cpuSwitchTime;
     }
 
 }

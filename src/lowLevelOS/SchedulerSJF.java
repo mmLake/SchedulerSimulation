@@ -22,18 +22,12 @@ public class SchedulerSJF extends Scheduler {
         populateCSV(textOne, processQueue);
     }
 
-    public void calculateBurstValues() {
-        int cpuTime = 0;
-
-        for (ProcessObj proc : processQueue){
-            proc.setStartBurstVal(proc.getBurst_time());
-        }
-    }
-
     public class BurstTimeComparator implements Comparator<ProcessObj>{
         public int compare(ProcessObj procA, ProcessObj procB){
             return procA.getBurst_time() - procB.getBurst_time();
         }
     }
+
+    public void calculateBurstValues(ProcessObj proc){}
 
 }
