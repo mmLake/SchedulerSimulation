@@ -9,8 +9,6 @@ import java.util.concurrent.ArrayBlockingQueue;
  * Created by mayalake on 10/19/17.
  */
 public class SchedulerRoundRobin extends Scheduler{
-    private final static String textOne = "testdataOne.txt";
-
     private int timeQuantum;
     private int initialQueueSize;
     private int counter = 0;
@@ -18,11 +16,15 @@ public class SchedulerRoundRobin extends Scheduler{
 
     public SchedulerRoundRobin(int timeQuantum){
         this.timeQuantum = timeQuantum;
-        processQueue = new ArrayBlockingQueue<ProcessObj>(30);
 
-        readValues(textOne, processQueue);
-        initialQueueSize = processQueue.size();
-        populateCSV(textOne, processQueue);
+        for (String textfile : getTextFiles()) {
+            counter = 0;
+            processQueue = new ArrayBlockingQueue<ProcessObj>(30);
+
+            readValues(textfile, processQueue);
+            initialQueueSize = processQueue.size();
+            populateCSV(textfile, processQueue);
+        }
     }
 
     public void calculateBurstValues(ProcessObj proc){
@@ -38,9 +40,6 @@ public class SchedulerRoundRobin extends Scheduler{
                 proc.setStopBurstVal(startVal - timeQuantum);
                 proc.setProcComplete(false);
             }
-            else{
-                System.out.println("Edge Case ERROR");
-            }
         }
         //second iteration and on
         else {
@@ -52,13 +51,12 @@ public class SchedulerRoundRobin extends Scheduler{
                 proc.setStartBurstVal(stopVal);
                 proc.setStopBurstVal(0);
                 proc.setProcComplete(true);
-
-            } else{
-                System.out.println("Edge Case ERROR");
-                proc.setProcComplete(true);
             }
         }
-
         counter++;
+    }
+
+    public String getTimeQuantum(){
+        return "("+String.valueOf(timeQuantum)+")";
     }
 }

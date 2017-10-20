@@ -11,15 +11,14 @@ import java.util.PriorityQueue;
  * Created by mayalake on 10/18/17.
  */
 public class SchedulerSJF extends Scheduler {
-
-    private final static String textOne = "testdataOne.txt";
-
     private Comparator<ProcessObj> comparator = new BurstTimeComparator();
     private Queue<ProcessObj> processQueue = new PriorityQueue<ProcessObj>(30, comparator);
 
     public SchedulerSJF(){
-        readValues(textOne, processQueue);
-        populateCSV(textOne, processQueue);
+        for (String textfile : getTextFiles()) {
+            readValues(textfile, processQueue);
+            populateCSV(textfile, processQueue);
+        }
     }
 
     public class BurstTimeComparator implements Comparator<ProcessObj>{
@@ -29,5 +28,6 @@ public class SchedulerSJF extends Scheduler {
     }
 
     public void calculateBurstValues(ProcessObj proc){}
+    public String getTimeQuantum(){return "";}
 
 }

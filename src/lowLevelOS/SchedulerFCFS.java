@@ -9,13 +9,15 @@ import java.util.concurrent.ArrayBlockingQueue;
  * Created by mayalake on 10/17/17.
  */
 public class SchedulerFCFS extends Scheduler{
-    private final static String textOne = "testdataOne.txt";
     private Queue<ProcessObj> processQueue = new ArrayBlockingQueue<ProcessObj>(30);
 
     public SchedulerFCFS(){
-        readValues(textOne, processQueue);
-        populateCSV(textOne, processQueue);
+        for (String textfile : getTextFiles()) {
+            readValues(textfile, processQueue);
+            populateCSV(textfile, processQueue);
+        }
     }
 
     public void calculateBurstValues(ProcessObj proc) {}
+    public String getTimeQuantum(){return "";}
 }
